@@ -1,6 +1,6 @@
 #ODE Integrators
-import matplotlib.pyplot as plt
 import math
+import matplotlib.pyplot as plt
 
 def numInput(prompt):
         try:
@@ -8,6 +8,7 @@ def numInput(prompt):
         except ValueError:
             num = numInput("Invalid input, please enter a number: ")
         return num
+
 
 #Explict Method
 def explictMethod(mass, cur_x, cur_vel, force, dt):
@@ -67,7 +68,7 @@ def analyticalSpring(mass, x0, v0, k_cons, damp_cons, dt):
       
         return pos_list, time_list
 
-def main():
+def compare():
         mass = numInput("Please enter a mass: ")         
         k_cons = numInput("Please enter a spring constant: ")
         damp_cons  = numInput("Please enter a damping constant: ")
@@ -92,5 +93,3 @@ def main():
         plt.ylabel('X displacement')
         plt.show()
 
-#run main
-main()
