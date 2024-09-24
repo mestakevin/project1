@@ -100,15 +100,25 @@ def analyticalSpring(mass, x0, v0, k_cons, damp_cons, dt):
 
         cur_x = x0         
         alp =  (-damp_cons / (2* mass))
-        #beta = ( ( (4 * mass * k_cons - (damp_cons ** 2) ) / (4* ( mass ** 2) ) ) ** 0.5 )
-        beta = ( (k_cons/mass) - (alp**2) ) ** 2 
+        beta = ( (k_cons/mass) - (alp**2) ) ** 0.5 
       
         while iteration < 5000:
             pos_list.append(cur_x)
             time_list.append(time)
             
             time += dt
-            cur_x = (math.exp(alp * time) )*(x0 * math.cos(beta * time ) + ((v0 - alp * x0) / beta) * math.sin(beta * time) )
+            if beta == 0: #Critically damped
+                cur_x = (math.exp(alp * time) )* (x0) 
+            elif (k_cons/mass - alp**2) < 0: #Over damped
+                root1 = (-damp_cons - (damp_cons**2 -4*mass*k_cons)**0.5)/(2*mass) 
+                root2 = (-damp_cons + (damp_cons**2 -4*mass*k_cons)**0.5)/(2*mass) 
+                b_cons = (v0 - x0 * root1) / (root2 - root1)
+                a_cons = x0 - b_cons
+                cur_x = a_cons*math.exp(root1 * time) + b_cons*math.exp(root2 * time)
+            else:   #Under damped
+            
+                cur_x = (math.exp(alp * time) )*(x0 * math.cos(beta * time ) + ((v0 - alp * x0) / beta) * math.sin(beta * time) )
+
             iteration += 1        
       
         return pos_list, time_list

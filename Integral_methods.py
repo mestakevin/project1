@@ -54,7 +54,7 @@ def trapezoidRule(num_steps, length, eng_lvl, start, stop):
         area = (step_size / 2) * area
         return area
 
-def integrateProb():
+def compare():
         length = numInput("Please enter the length of the box: ")
         eng_lvl = numInput("Please enter the energy level: ")
         num_steps = numInput("Please enter the number of steps for integration: ")
@@ -74,4 +74,3 @@ def integrateProb():
 
         print("The calculated area using Trapezoid rule is:", trapezoidRule(num_steps, length, eng_lvl, start, stop) ) 
 
-integrateProb()

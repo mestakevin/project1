@@ -14,6 +14,6 @@ def numInput(prompt):
 
 def main():
         ode.compare()
-        
+        integ.compare()        
 
 main()
