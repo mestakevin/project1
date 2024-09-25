@@ -13,7 +13,7 @@ def numInput(prompt):
         return num
 
 def main():
-        ode.compare()
+#        ode.compare()
         integ.compare()        
 
 main()
