@@ -1,7 +1,7 @@
 #ODE Integrators
 import math
 import matplotlib.pyplot as plt
-import scipy.integrate as scpy
+from scipy.integrate import solve_ivp
 
 
 def numInput(prompt):
@@ -27,13 +27,10 @@ def explictMethod(mass, cur_x, cur_vel, force, dt):
 def RK4(mass, cur_x, cur_vel, k_cons, damp_cons, dt):
         k1x = func1RK4(cur_x, cur_vel)
         k1v = func2RK4(cur_x, cur_vel, k_cons, damp_cons, mass)
-        
         k2x = func1RK4(cur_x + (dt * k1x / 2), cur_vel + (dt * k1v / 2 ) )
         k2v = func2RK4(cur_x + (dt * k1x / 2), cur_vel + (dt * k1v / 2 ), k_cons, damp_cons, mass )
-
         k3x = func1RK4(cur_x + (dt * k2x / 2), cur_vel + (dt * k2v / 2 ) )
         k3v = func2RK4(cur_x + (dt * k2x / 2), cur_vel + (dt * k2v / 2 ), k_cons, damp_cons, mass )
-
         k4x = func1RK4(cur_x + (dt * k3x / 2), cur_vel + (dt * k3v / 2 ) )
         k4v = func2RK4(cur_x + (dt * k3x / 2), cur_vel + (dt * k3v / 2 ), k_cons, damp_cons, mass )
 
@@ -47,7 +44,11 @@ def func1RK4(x, v):
 def func2RK4(x, v, k_cons, damp_cons, mass):
         return ( ( (-k_cons/mass) * x) - ( (damp_cons/mass) * v) )
 
-
+def scipyRK45(t,y,k_cons, damp_cons, mass):
+        x,v = y 
+        dxdt = v
+        dvdt = ( ( (-k_cons/mass) * x) - ( (damp_cons/mass) * v) )
+        return [dxdt,dvdt]
 
 def RK4Spring(mass, x0, v0, k_cons, damp_cons, dt):
         pos_list = []
@@ -56,19 +57,15 @@ def RK4Spring(mass, x0, v0, k_cons, damp_cons, dt):
         time = 0
         cur_x = x0
         cur_vel = v0
-
         while iteration < 5000:
-            
             pos_list.append(cur_x)
-            time_list.append(time)
-            
-
+            time_list.append(time) 
             cur_x, cur_vel = RK4(mass, cur_x, cur_vel, k_cons, damp_cons, dt)
-        
             time += dt
             iteration += 1
         
         return pos_list, time_list
+
 
 def explicitSpring(mass, x0, v0, k_cons, damp_cons, dt):
         pos_list = []
@@ -141,6 +138,16 @@ def compare():
        
         pos_list, time_list = RK4Spring(mass, x_init, v_init, k_cons, damp_cons, dt)
         plt.plot(time_list, pos_list, label = 'RK4')
+       
+        t_span = [0.0, 50]
+        y0 = [x_init,v_init]
+        scipyRUNGE = solve_ivp(scipyRK45,t_span,y0, method='RK45', args=(k_cons, damp_cons, mass))
+
+        print(scipyRUNGE)
+        time_list = scipyRUNGE.t
+        pos_list = scipyRUNGE.y[0]
+        
+        plt.plot(time_list, pos_list, label = 'SciPy RK4')
 
         pos_list, time_list = analyticalSpring(mass, x_init, v_init, k_cons, damp_cons, dt)
         plt.plot(time_list, pos_list, label = 'Analytical')
