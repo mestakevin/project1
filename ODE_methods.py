@@ -3,7 +3,11 @@ import math
 import matplotlib.pyplot as plt
 from scipy.integrate import solve_ivp
 
-
+#purpose: obtains a float or integer number from the user, if it is not a number it will ask again until a number is entered
+#assumptions: number entered is acceptable for the given prompt
+#inputs: prompt - message displayed to the user instructing them what type of number to enter
+#outputs: returns the number entered as a float
+object on spring has begun moving and constants have been initalized
 def num_input(prompt):
     try:
         num = float(input(prompt))
@@ -11,6 +15,13 @@ def num_input(prompt):
         num = num_input("Invalid input, please enter a number: ")
     return num
 
+#purpose: calculates the force experienced by the object on the spring
+#assumptions: object on spring has begun moving and constants have been initalized  
+#inputs: cur_x - current displacement of object from equilibrium position
+#       cur_vel - current velocity of the object relative to equilibium position
+#       K_CONS - spring constant
+#       DAMP_CONS - damping constant
+#outputs: returns the force experienced by the object
 
 def get_force(cur_x, cur_vel, K_CONS, DAMP_CONS):
     force = (-K_CONS * cur_x) - (DAMP_CONS * cur_vel)
@@ -18,6 +29,14 @@ def get_force(cur_x, cur_vel, K_CONS, DAMP_CONS):
 
 
 # Explict Method
+#purpose: updates the velocity and position of the object on the spring using the explicit method
+#assumption: object on spring has begun moving and constants have been initalized
+#inputs: MASS - mass of object on the spring
+#       cur_x - current displacement of object from equilibrium position
+#       cur_vel - current velocity of the object relative to equilibrium position
+#       force - current force experienced by object
+#       dt - time step
+#outputs: returns the new displacement and new velocity
 def explict_method(MASS, cur_x, cur_vel, force, dt):
     new_vel = cur_vel + (force / MASS) * dt
     new_x = cur_x + cur_vel * dt
@@ -25,8 +44,14 @@ def explict_method(MASS, cur_x, cur_vel, force, dt):
 
 
 # Fourth Order Runge-Kutta
-
-
+#purpose: updates the velocity and the position of the object on the spring using the RK4 method
+#assumption: object on spring has begun moving and constants have been initalized, functions for RK4 method have been created
+#inputs: MASS - mass of object on the spring
+#       cur_x - current displacement of object from equilibrium position
+#       cur_vel - current velocity of the object relative to equilibirum position
+#       force - current force experienced by object
+#       dt - time step
+#outputs: returns the new displacement and new velocity
 def kevin_RK4(MASS, cur_x, cur_vel, K_CONS, DAMP_CONS, dt):
     k1x = func1_RK4(cur_x, cur_vel)
     k1v = func2_RK4(cur_x, cur_vel, K_CONS, DAMP_CONS, MASS)
@@ -48,14 +73,35 @@ def kevin_RK4(MASS, cur_x, cur_vel, K_CONS, DAMP_CONS, dt):
     return new_x, new_v
 
 
+#purpose: first function for the kevin_RK4 function that returns value of dx/dt
+#assumption: object on spring has begun moving and constants have been initalized and kevin_RK4 method is being run
+#inputs: x - current displacement of object from equilibrium position
+#       v - current velocity of object relative to equilibrium position
+#outputs: returns the value of dx/dt which is velocity
 def func1_RK4(x, v):
     return v
 
 
+#purpose: second function for the kevin_RK4 function that returns value of dv/dt
+#assumption: object on spring has begun moving and constants have been initalized and kevin_RK4 method is being run
+#inputs: x - current displacement of object from equilibrium position
+#       v - current velocity of object relative to equilibrium position       
+#       K_CONS - spring constant
+#       DAMP_CONS - damping constant
+#       MASS - mass of object on the spring
+#outputs: returns the value of dv/dt which is acceleration
 def func2_RK4(x, v, K_CONS, DAMP_CONS, MASS):
     return ((-K_CONS / MASS) * x) - ((DAMP_CONS / MASS) * v)
 
 
+#purpose: calculates dx/dt and dv/dt for the solve_ivp function from scipy.integrate written in format for RK4 method 
+#assumption: scipy.integrate has been imported, constants have also been intialized
+#inputs: t - current time
+#       y - vector with displacement of mass from equilibrium and velocity of mass
+#       K_CONS - spring constant
+#       DAMP_CONS - damping constant
+#       MASS - mass of object on the spring
+#outputs: returns dx/dt and dv/dt in a list
 def scipy_RK45(t, y, K_CONS, DAMP_CONS, MASS):
     x, v = y
     dxdt = v
@@ -63,6 +109,15 @@ def scipy_RK45(t, y, K_CONS, DAMP_CONS, MASS):
     return [dxdt, dvdt]
 
 
+#purpose: oscillates spring using own RK4 method
+#assumption: user has inputted constants for spring simulation
+#inputs: MASS - mass of object on the spring
+#       x0 - initial displacement of object from equilibrium position
+#       v0 - initial velocity of object relative to equilibrium position
+#       K_CONS - spring constant
+#       DAMP_CONS - damping constant
+#       dt - time step
+#outputs: returns list of displacements of object from equilibirium position and corresponding time list
 def RK4Spring(MASS, x0, v0, K_CONS, DAMP_CONS, dt):
     pos_list = []
     time_list = []
@@ -80,6 +135,15 @@ def RK4Spring(MASS, x0, v0, K_CONS, DAMP_CONS, dt):
     return pos_list, time_list
 
 
+#purpose: oscillates spring using own explicit method
+#assumption: user has inputted constants for spring simulation
+#inputs: MASS - mass of object on the spring
+#       x0 - initial displacement of object from equilibrium position
+#       v0 - initial velocity of object relative to equilibrium position
+#       K_CONS - spring constant
+#       DAMP_CONS - damping constant
+#       dt - time step
+#outputs: returns list of displacements of object from equilibirium position and corresponding time list
 def explicitSpring(MASS, x0, v0, K_CONS, DAMP_CONS, dt):
     pos_list = []
     time_list = []
@@ -99,6 +163,14 @@ def explicitSpring(MASS, x0, v0, K_CONS, DAMP_CONS, dt):
     return pos_list, time_list
 
 
+#purpose: oscillates spring using analytically determined solution for four cases, harmonic oscillator, underdamped, overdamped or critically damped
+#assumption: user has inputted constants for spring simulation
+#inputs: MASS - mass of object on the spring
+#       x0 - initial displacement of object from equilibrium position
+#       v0 - initial velocity of object relative to equilibrium position
+#       K_CONS - spring constant
+#       DAMP_CONS - damping constant
+#outputs: returns list of displacements of object from equilibirium position and corresponding time list
 def analyticalSpring(MASS, x0, v0, K_CONS, DAMP_CONS, dt):
     pos_list = []
     time_list = []
@@ -133,6 +205,15 @@ def analyticalSpring(MASS, x0, v0, K_CONS, DAMP_CONS, dt):
 
     return pos_list, time_list
 
+#purpose: plots two different methods on the same figure
+#assumption: at least two different spring functions have been run and the outputs stored
+#inputs: pos_list1 - displacement of spring from equilibrium position using method 1
+#       time_list1 - associated time list for pos_list1
+#       label1 - name of method 1
+#       pos_list1 - displacement of spring from equilibrium position using method 2
+#       time_list - associated time list for pos_list2
+#       label2 - name of method 2
+#outputs: plot with both methods calculated displacements labeled accordingly
 
 def plotDataSets(pos_list1, time_list1, label1, pos_list2, time_list2, label2):
     plt.figure()
@@ -144,6 +225,10 @@ def plotDataSets(pos_list1, time_list1, label1, pos_list2, time_list2, label2):
     plt.show()
 
 
+#purpose: performs all four methods to determine object on a damped spring's position over time and displays comparison of explicit method with analytical solution and own RK4 method with scipy's RK4 method
+#assumption: user will only input values that are appropiate, such as a positive mass/spring constant
+#inputs: none
+#outputs: returns two plots, one with the explicit and analytical methods and another with own RK4 and scipy RK4 methods
 def compare():
     MASS = num_input("Please enter a mass: ")
     K_CONS = num_input("Please enter a spring constant: ")
