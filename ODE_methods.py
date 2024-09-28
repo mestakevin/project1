@@ -1,13 +1,14 @@
 # ODE Integrators
 import math
 import matplotlib.pyplot as plt
+import numpy as np
 from scipy.integrate import solve_ivp
 
 #purpose: obtains a float or integer number from the user, if it is not a number it will ask again until a number is entered
 #assumptions: number entered is acceptable for the given prompt
 #inputs: prompt - message displayed to the user instructing them what type of number to enter
 #outputs: returns the number entered as a float
-object on spring has begun moving and constants have been initalized
+#object on spring has begun moving and constants have been initalized
 def num_input(prompt):
     try:
         num = float(input(prompt))
@@ -242,7 +243,9 @@ def compare():
     rk_pos, rk_time = RK4Spring(MASS, x_init, v_init, K_CONS, DAMP_CONS, dt)
 
     plotDataSets(ex_pos, ex_time, "Explicit", an_pos, an_time, "Analytical")
-
+    plotDataSets(rk_pos, rk_time, "Kevin's RK4", an_pos, an_time, "Analytical")
+    plotDataSets(rk_pos, rk_time, "Kevin's RK4", ex_pos, ex_time, "Explicit")
+        
     t_span = [0.0, dt * 5000]
     y0 = [x_init, v_init]
     scipy_rk4 = solve_ivp(
@@ -256,4 +259,6 @@ def compare():
     scipy_time = scipy_rk4.t
     scipy_pos = scipy_rk4.y[0]
 
-    plotDataSets(rk_pos, rk_time, "Kevin's RK4", scipy_pos, scipy_time, "Scipy's RK4")
+    plotDataSets(scipy_pos, scipy_time, "Scipy's RK4", an_pos, an_time, "Analytical")
+     
+    plotDataSets(scipy_pos, scipy_time, "Scipy's RK4", rk_pos, rk_time, "Kevin's RK4")

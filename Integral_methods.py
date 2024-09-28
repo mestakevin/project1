@@ -177,13 +177,13 @@ def compare():
     )
 
     print(
-        "The calculated area using Trapezoid rule from Scipy is:",
-        scipyTrapezoid(num_steps, length, eng_lvl, start, stop),
+        "The calculated area using Simpsons rule is:",
+        simpsonsRule(num_steps, length, eng_lvl, start, stop),
     )
 
     print(
-        "The calculated area using Simpsons rule is:",
-        simpsonsRule(num_steps, length, eng_lvl, start, stop),
+        "The calculated area using Trapezoid rule from Scipy is:",
+        scipyTrapezoid(num_steps, length, eng_lvl, start, stop),
     )
 
     print(
